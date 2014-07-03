@@ -203,6 +203,32 @@ double iMAOnArray(double& array[], int period, int ma_shift, ENUM_MA_METHOD ma_m
 }
 
 
+// Calculates bollinger bands indicator from array data
+bool iBBOnArray(double& data[], int period, double deviations, double& dnBand, double& ma, double& upBand)
+{
+   int size = ArraySize(data);
+   if (size < period)
+      return false;
+   if (period <= 0)
+      return false;
+      
+   ma = iMAOnArray(data, period, 0, MODE_SMA, 0);
+   
+   double sum = 0.0, val;
+   int i;
+   
+   for (i = 0; i < period; i++) {
+      val = data[size - i - 1] - ma;
+      sum += val * val;
+   }
+   
+   double dev = deviations * MathSqrt(sum / period);
+   dnBand = ma - dev;
+   upBand = ma + dev;
+   return true;
+}
+
+
 bool test_IndicatorsOnArray()
 {
    Print("Start IndicatorsOnArray test suite...");
